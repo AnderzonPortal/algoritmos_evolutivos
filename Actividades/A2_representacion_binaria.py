@@ -35,13 +35,30 @@ def calcular_fitness(cromosoma):
         return -1000
     
     promedios = {}
+    varianzas = []
+    diversidades = []
+
     for examen in ['A', 'B', 'C']:
         indices = asignaciones[examen]
         notas_examen = [notas[i] for i in indices]
+
         promedios[examen] = np.mean(notas_examen)
-    
+        varianza = np.var(notas_examen)
+        max_nota = max(notas_examen)
+        min_nota = min(notas_examen)
+        rango = max_nota - min_nota
+        
+        promedios[examen] = promedio
+        varianzas.append(varianza)
+        diversidades.append(rango)
+
+
     desviacion = np.std(list(promedios.values()))
-    return -desviacion
+    varianza_prom = np.mean(varianzas)
+    diversidad_prom = np.mean(diversidades)
+
+    fitness = -desviacion - 0.1 * varianza_prom + 0.05 *diversidad_prom
+    return fitness
 
 def mutacion(cromosoma):
     cromosoma_mutado = cromosoma.copy()
