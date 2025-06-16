@@ -95,6 +95,26 @@ def mutacion(cromosoma):
     
     return cromosoma_mutado
 
+#Implementacion de un operador de mutacion diferente 
+
+def mutacion_gaussiana(cromosoma, sigma=0.1):
+    cromosoma_mutado = cromosoma.copy()
+    for i in range(39):
+        idx = i * 3
+        genes = cromosoma_mutado[idx:idx+3]
+        perturbacion = np.random.normal(0, sigma, 3)
+        nuevos_genes = genes + perturbacion
+        nuevos_genes = np.clip(nuevos_genes, 0, None)
+        suma = np.sum(nuevos_genes)
+        if suma == 0:
+            nuevos_genes = np.array([1/3, 1/3, 1/3])
+        else:
+            nuevos_genes = nuevos_genes / suma
+        cromosoma_mutado[idx:idx+3] = nuevos_genes
+    return cromosoma_mutado
+
+
+
 def algoritmo_genetico(generaciones=150, tam_poblacion=100):
     poblacion = [crear_cromosoma() for _ in range(tam_poblacion)]
     
@@ -120,7 +140,7 @@ def algoritmo_genetico(generaciones=150, tam_poblacion=100):
             padre2 = random.choice(poblacion[:tam_poblacion//4])[0] if isinstance(poblacion[0], tuple) else random.choice(poblacion[:tam_poblacion//4])
             
             hijo = cruce(padre1, padre2)
-            hijo = mutacion(hijo)
+            hijo = mutacion_gaussiana(hijo, sigma =0.3) 
             nueva_poblacion.append(hijo)
         
         poblacion = nueva_poblacion
